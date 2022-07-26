@@ -1,14 +1,19 @@
 version: "3.3"
 services:
+
     backend:
-        build:
-            context: ./backend
+        build: ./backend
         ports:
             - 8000:8000
+        volumes:
+            - "./backend:/app"
+        command: bash -c "cargo watch -x run"
+
     frontend:
-        build:
-            context: ./frontend
+        build: ./frontend
         ports:
             - 3000:3000
         links:
             - backend
+        volumes:
+            - "./frontend:/app"
