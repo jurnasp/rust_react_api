@@ -7,7 +7,12 @@ edition = "2021"
 
 [dependencies]
 serde = "1.0.130"
+diesel = "1.4.8"
 
 [dependencies.rocket]
 version = "0.5.0-rc.2"
 features = ["json"]
+
+[dependencies.rocket_db_pools]
+version = "0.1.0-rc.2"
+features = ["sqlx_postgres"]

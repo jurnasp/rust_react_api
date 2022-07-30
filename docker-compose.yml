@@ -5,9 +5,11 @@ services:
         build: ./backend
         ports:
             - 8000:8000
+        links:
+            - db
         volumes:
             - "./backend:/app"
-        command: bash -c "cargo watch -x run"
+        command: cargo watch -x run
 
     frontend:
         build: ./frontend
@@ -17,3 +19,15 @@ services:
             - backend
         volumes:
             - "./frontend:/app"
+
+    db:
+        image: postgres:latest
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: databaseuser
+            POSTGRES_PASSWORD: databasepassword
+            POSTGRES_DB: api_db
+        volumes:
+            - "./pgdata:/var/lib/postgresql/data"
+        command: ["postgres", "-c", "log_statement=all"]
