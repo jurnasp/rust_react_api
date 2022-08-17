@@ -6,6 +6,7 @@ use rocket_db_pools::Database;
 
 mod routes;
 mod database;
+mod models;
 
 #[catch(404)]
 fn not_found() -> Value {
@@ -20,7 +21,7 @@ fn not_found() -> Value {
 async fn main() {
     rocket::build()
         .attach(database::PgDatabase::init())
-        .mount("/api", routes![routes::user::get_user, routes::db::test_db])
+        .mount("/api", routes![routes::user::db_get_user, routes::user::get_user, routes::db::test_db])
         .register("/", catchers![not_found])
         .launch()
         .await;

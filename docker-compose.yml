@@ -9,7 +9,7 @@ services:
             - db
         volumes:
             - "./backend:/app"
-        command: cargo watch -x run
+        command: bash -c "sqlx migrate run && cargo watch -x run"
 
     frontend:
         build: ./frontend
