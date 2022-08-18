@@ -1,7 +1,5 @@
-use sqlx::FromRow;
 use serde::Serialize;
 
-#[derive(FromRow, Debug)]
 pub struct User {
     pub id: i32,
     pub name: String,
