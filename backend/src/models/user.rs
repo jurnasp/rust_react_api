@@ -15,3 +15,13 @@ pub struct UserResult {
     pub email: String,
     pub hashed_password: String
 }
+
+impl User {
+    pub fn to_user_result(self) -> UserResult {
+        UserResult {
+            name: self.name,
+            email: self.email,
+            hashed_password: self.hashed_password,
+        }
+    }
+}
