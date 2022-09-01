@@ -1,8 +1,9 @@
 #[macro_use] extern crate rocket;
 
-use rocket::serde::json::Value;
+use dotenv;
 use rocket::serde::json::serde_json::json;
-use rocket_db_pools::Database;
+use rocket::serde::json::Value;
+use sqlx::postgres::PgPoolOptions;
 
 mod routes;
 mod database;
@@ -18,11 +19,21 @@ fn not_found() -> Value {
 
 #[rocket::main]
 #[allow(unused_must_use)]
-async fn main() {
+async fn main() -> Result<(), &'static str> {
+    let database_url = dotenv::var("DATABASE_URL")
+        .expect("DATABASE_URL environment variable not set");
+
+    let pool = PgPoolOptions::new()
+        .connect(&database_url)
+        .await
+        .expect("Unable to connect to database");
+
     rocket::build()
-        .attach(database::PgDatabase::init())
+        .manage(pool)
         .mount("/api", routes![routes::user::db_get_user, routes::user::get_user, routes::db::test_db])
         .register("/", catchers![not_found])
         .launch()
         .await;
+
+    Ok(())
 }

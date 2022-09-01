@@ -1,13 +1,12 @@
-use rocket::serde::json::Value;
 use rocket::serde::json::serde_json::json;
-use rocket_db_pools::{Connection, sqlx};
-use rocket_db_pools::sqlx::Row;
-use crate::database::{PgDatabase};
+use rocket::serde::json::Value;
+use rocket::State;
+use sqlx::{Pool, Postgres, Row};
 
 #[get("/db")]
-pub async fn test_db(mut db: Connection<PgDatabase>) -> Result<Value, &'static str> {
-    let result:i32 = sqlx::query("SELECT 1+1 AS result")
-        .fetch_one(&mut *db)
+pub async fn test_db(db: &State<Pool<Postgres>>) -> Result<Value, &'static str> {
+    let result: i32 = sqlx::query("SELECT 1+1 AS result")
+        .fetch_one(&**db)
         .await
         .and_then(|r| Ok(r.get("result")))
         .unwrap();
