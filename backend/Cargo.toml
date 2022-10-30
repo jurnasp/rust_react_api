@@ -8,6 +8,9 @@ edition = "2021"
 [dependencies]
 serde = "1.0.130"
 dotenv = "0.15.0"
+scrypt = "0.10.0"
+jsonwebtoken = "8.1.1"
+chrono = "0.4.19"
 
 [dependencies.rocket]
 version = "0.5.0-rc.2"

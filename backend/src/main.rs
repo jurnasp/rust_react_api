@@ -1,4 +1,5 @@
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
 use dotenv;
 use rocket::serde::json::serde_json::json;
@@ -8,6 +9,7 @@ use sqlx::postgres::PgPoolOptions;
 mod routes;
 mod database;
 mod models;
+mod auth;
 
 #[catch(404)]
 fn not_found() -> Value {
@@ -30,7 +32,16 @@ async fn main() -> Result<(), &'static str> {
 
     rocket::build()
         .manage(pool)
-        .mount("/api", routes![routes::user::db_get_user, routes::user::get_user, routes::db::test_db])
+        .mount("/api",
+               routes![
+                   routes::user::db_get_user,
+                   routes::user::get_user,
+                   routes::db::test_db,
+                   routes::user::post_set_password,
+                   routes::user::post_login,
+                   routes::user::get_authenticated_user,
+                   routes::user::post_new_user
+               ])
         .register("/", catchers![not_found])
         .launch()
         .await;
