@@ -11,7 +11,7 @@ dotenv = "0.15.0"
 
 [dependencies.rocket]
 version = "0.5.0-rc.2"
-features = ["json"]
+features = ["json", "uuid"]
 
 [dependencies.rocket_db_pools]
 version = "0.1.0-rc.2"
@@ -19,4 +19,12 @@ features = ["sqlx_postgres", "sqlx_macros"]
 
 [dependencies.sqlx]
 version = "0.6.0"
-features = ["runtime-tokio-rustls", "postgres", "migrate", "macros"]
+features = ["runtime-tokio-rustls", "postgres", "migrate", "macros", "uuid"]
+
+[dependencies.uuid]
+version = "1.1.2"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]

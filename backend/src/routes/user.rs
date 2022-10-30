@@ -1,7 +1,8 @@
 use rocket::serde::json::serde_json::json;
 use rocket::serde::json::Value;
 use rocket::State;
-use sqlx::{Pool, Postgres};
+use sqlx::{Pool, Postgres, types::Uuid};
+use uuid::uuid;
 
 use crate::models::user::UserResult;
 
@@ -11,7 +12,7 @@ pub fn get_user() -> Result<Value, &'static str>  {
 }
 
 #[get("/user/<id>")]
-pub async fn db_get_user(db: &State<Pool<Postgres>>, id: i32) -> Result<Value, &'static str>  {
+pub async fn db_get_user(db: &State<Pool<Postgres>>, id: Uuid) -> Result<Value, &'static str>  {
     let user = crate::database::user::get_user(&db, id).await;
     let user_result = user.to_user_result();
 
