@@ -2,9 +2,9 @@ use rocket::serde::json::serde_json::json;
 use rocket::serde::json::{Json, Value};
 use rocket::serde::Deserialize;
 use rocket::State;
-use sqlx::{Pool, Postgres, types::Uuid};
+use sqlx::{types::Uuid};
 use crate::auth::Auth;
-
+use crate::database::database::Db;
 use crate::models::user::{NewUserData, UserResult};
 
 #[get("/first_user")]
@@ -13,7 +13,7 @@ pub fn get_user() -> Result<Value, &'static str>  {
 }
 
 #[get("/user/<id>")]
-pub async fn db_get_user(db: &State<Pool<Postgres>>, id: Uuid) -> Result<Value, &'static str>  {
+pub async fn db_get_user(db: &State<Db>, id: Uuid) -> Result<Value, &'static str>  {
     let user = crate::database::user::get_user(&db, id).await;
     let user_result = user.to_user_result();
 
@@ -21,7 +21,7 @@ pub async fn db_get_user(db: &State<Pool<Postgres>>, id: Uuid) -> Result<Value, 
 }
 
 #[post("/user/<id>/set-password", data = "<password>")]
-pub async fn post_set_password(db: &State<Pool<Postgres>>, id: Uuid, password: String) -> Result<Value, &'static str> {
+pub async fn post_set_password(db: &State<Db>, id: Uuid, password: String) -> Result<Value, &'static str> {
     let user = crate::database::user::get_user(&db, id).await;
     crate::database::user::set_password(&db, user, &password).await;
 
@@ -40,7 +40,7 @@ struct LoginUserData {
 }
 
 #[post("/user/login", format = "json", data = "<user>")]
-pub async fn post_login(db: &State<Pool<Postgres>>, user: Json<LoginUser>) -> Result<Value, Value> {
+pub async fn post_login(db: &State<Db>, user: Json<LoginUser>) -> Result<Value, Value> {
     let user = user.into_inner().user;
     let email = user.email.unwrap();
     let password = user.password.unwrap();
@@ -54,7 +54,7 @@ pub async fn post_login(db: &State<Pool<Postgres>>, user: Json<LoginUser>) -> Re
 }
 
 #[get("/user")]
-pub async fn get_authenticated_user(auth: Auth, db: &State<Pool<Postgres>>) -> Result<Value, &'static str> {
+pub async fn get_authenticated_user(auth: Auth, db: &State<Db>) -> Result<Value, &'static str> {
     let secret = crate::auth::TOKEN_SECRET;
 
     let user = crate::database::user::get_user(&db, auth.id).await;
@@ -69,7 +69,7 @@ pub struct NewUser {
 }
 
 #[post("/user", format = "json", data = "<new_user>")]
-pub async fn post_new_user(db: &State<Pool<Postgres>>, new_user: Json<NewUser>) -> Result<Value, &'static str> {
+pub async fn post_new_user(db: &State<Db>, new_user: Json<NewUser>) -> Result<Value, &'static str> {
     let new_user = new_user.into_inner().user;
 
     let secret = crate::auth::TOKEN_SECRET;
